@@ -47,7 +47,7 @@ const HomePage = () => {
         {/* Register Account */}
         <div className="lg:col-span-3 mt-8"> {/* Ajuste o número conforme necessário */}
           <h3 className="slogan lg:mt-2 leading-normal font-bold text-center text-base lg:text-[2rem]">
-            ESTAMOS AQUI PARA TE OUVIR
+            ESTAMOS AQUI PARA TE OUVIR2
           </h3>
           <RegisterAccount className="lg:w-full mx-auto" /> {/* Adicione a classe lg:w-full e mx-auto para ocupar toda a largura e centralizar em telas grandes */}
         </div>
