@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import MuiTextField from "@mui/material/TextField";
 import React, { useEffect, useRef, useState } from "react";
+import CreatableSelect from 'react-select/creatable';
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import DashboardLinkButton from "../components/DashboardLinkButton";
@@ -23,11 +24,12 @@ import { identifyLocation } from "../utils/MiscFunctions";
 import { Statuses } from "../utils/enums";
 
 const TextField = styled(MuiTextField)((props) => ({
-  width: "80%",
+  width: "91%",
   [`& fieldset`]: {
     borderRadius: "15px",
   },
 }));
+
 const ReportComplaint = () => {
   const [Media, setMedia] = useState();
   const [MediaPath, setMediaPath] = useState("");
@@ -44,10 +46,12 @@ const ReportComplaint = () => {
     timestamp: "",
     status: Statuses.inProgress,
     mediaType: "",
+    selectedEmails: [],  // Adicionado estado para armazenar os emails selecionados
   });
   const [LoaderVisibile, setLoaderVisibile] = useState(false);
   const FileInput = useRef(null);
   const navigate = useNavigate();
+
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (!user || !isOfficial(user.uid)) {
@@ -56,6 +60,7 @@ const ReportComplaint = () => {
       setFormData({ ...FormData, reportedBy: user.uid });
     });
   }, []);
+
   return (
     <div className="overflow-x-hidden">
       <SpinnerModal visible={LoaderVisibile} />
@@ -80,7 +85,7 @@ const ReportComplaint = () => {
         onSubmit={(e) => {
           e.preventDefault();
           setLoaderVisibile(true);
-          createComplaint(FormData, Media)
+          createComplaint(FormData, Media, FormData.selectedEmails)
             .then(() => {
               toast.success("Registro criado com sucesso!");
               setTimeout(() => {
@@ -96,7 +101,6 @@ const ReportComplaint = () => {
         }}
       >
         <input
-          required
           type="file"
           ref={FileInput}
           className="opacity-0"
@@ -175,56 +179,91 @@ const ReportComplaint = () => {
           >
             <FormControlLabel
               value="Reclamação"
-              control={<Radio />}
+              control={<Radio required/>}
               label="Reclamação"
             />
             <FormControlLabel
               value="Elogio"
-              control={<Radio />}
+              control={<Radio required/>}
               label="Elogio"
             />
             <FormControlLabel
               value="Dúvida"
-              control={<Radio />}
+              control={<Radio required/>}
               label="Dúvida"
             />
             <FormControlLabel
               value="Solicitação"
-              control={<Radio />}
+              control={<Radio required/>}
               label="Solicitação"
             />
             <FormControlLabel
               value="Crítica"
-              control={<Radio />}
+              control={<Radio required/>}
               label="Crítica"
             />
             <FormControlLabel
               value="Sugestão"
-              control={<Radio />}
+              control={<Radio required/>}
               label="Sugestão"
             />
             <FormControlLabel
               value="Outros"
-              control={<Radio />}
+              control={<Radio required/>}
               label="Outros"
+              style={{ marginBottom: '20px' }}
             />
           </RadioGroup>
           <p className="my-2">Mais informação</p>
           <TextField
             required
             multiline
+            style={{ marginBottom: '20px' }}
             value={FormData.additionalInfo}
             onChange={(e) => {
               setFormData({ ...FormData, additionalInfo: e.target.value });
             }}
-            rows={5}
+            rows={3}
             placeholder="Forneça mais informação sobre o registro"
+          />
+          <p className="my-2">Selecionar destinatários:</p>
+          <CreatableSelect
+            isMulti
+            onChange={(selectedOptions) => {
+              const emails = selectedOptions.map((option) => option.value);
+              setFormData({ ...FormData, selectedEmails: emails });
+            }}
+            options={[
+              { value: 'email1@example.com', label: 'Prefeitura' }
+            ]}
+            styles={{
+              container: (provided, state) => ({
+                ...provided,
+                width: '1610px', // Ajuste a largura conforme necessário
+              }),
+              control: (provided, state) => ({
+                ...provided,
+                background: 'transparent',
+                border: '1px solid #aaa',
+                borderRadius: '10px',
+                fontSize: '15px',
+                boxShadow: 'none',
+                marginBottom: '20px'
+              }),
+              option: (provided, state) => ({
+                ...provided,
+                background: 'transparent',
+                color: 'black',
+              }),
+            }}
+            placeholder="Selecione uma entidade responsável pela sua solicitação"
           />
           <FormControlLabel
             required
             value="terms-accepted"
             control={<Checkbox />}
             label="Marcando esta caixa, Eu compreendo que fazer denúncias falsas resultarão em responsabilização criminal."
+            style={{ marginBottom: '20px' }}
           />
         </Box>
         <div className="flex justify-center my-8 px-40 lg:px-96">

@@ -71,19 +71,39 @@ export const handleLogin = async (formData) => {
   }
 };
 
-export const createComplaint = async (formData, media) => {
+export const createComplaint = async (formData, media, selectedEmails) => {
   const timestamp = Date.now();
-  const fileName = `complaints/${timestamp}.${media.name.split(".")[1]}`;
-  const fileRef = ref(storage, fileName);
+
   try {
-    await uploadBytes(fileRef, media);
-    const fileLink = await getDownloadURL(fileRef);
-    const updatedFormData = { ...formData, timestamp, mediaPath: fileLink };
+    let fileLink = null;
+
+    if (media) {
+      const fileName = `complaints/${timestamp}.${media.name.split(".")[1]}`;
+      const fileRef = ref(storage, fileName);
+      await uploadBytes(fileRef, media);
+      fileLink = await getDownloadURL(fileRef);
+    }
+
+    // Gera um protocolo com 7 digiteos
+    const protocolNumber = Math.floor(1000000 + Math.random() * 9000000);
+
+    // Adiciona o protocolo
+    const updatedFormData = {
+      ...formData,
+      timestamp,
+      mediaPath: fileLink,
+      protocolNumber,
+      selectedEmails: selectedEmails || [], 
+    };
+
+    // Adiciona os dados ao Firestore
     await addDoc(collection(db, "complaints"), updatedFormData);
   } catch (error) {
     throw new Error(error.message);
   }
 };
+
+
 
 export const fetchComplaintsByUser = (uid, handleComplaintsUpdate) => {
   const complaintsRef = collection(db, "complaints");

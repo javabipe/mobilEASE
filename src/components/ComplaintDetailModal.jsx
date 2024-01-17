@@ -1,7 +1,10 @@
-import { faClockFour } from "@fortawesome/free-regular-svg-icons";
+import React, { useEffect, useState } from "react";
+import { Dialog } from "@mui/material";
 import {
+  faClockFour,
   faClose,
-  faMapMarkerAlt
+  faMapMarkerAlt,
+  faHashtag,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Send } from "@mui/icons-material";
@@ -13,21 +16,20 @@ import {
   IconButton,
   TextField,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
 import { auth } from "../utils/Firebase";
 import {
   addComment,
   isOfficial,
   markAsRejected,
-  markAsSolved
+  markAsSolved,
 } from "../utils/FirebaseFunctions";
 import { Statuses, statusColors } from "../utils/enums";
 import CommentsTile from "./CommentsTile";
 
 const ComplaintDetailModal = ({ setDialogOpen, complaint }) => {
-  console.log(complaint);
   const [Official, setOfficial] = useState(false);
   const [CommentBoxDisabled, setCommentBoxDisabled] = useState(true);
+
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user && isOfficial(user.uid)) {
@@ -35,21 +37,28 @@ const ComplaintDetailModal = ({ setDialogOpen, complaint }) => {
       }
     });
   }, []);
+
   let TimeStamp = new Date(complaint.timestamp);
   let date = TimeStamp.toLocaleDateString();
   let time = TimeStamp.toLocaleTimeString("pt-BR", {
     hour: "numeric",
     minute: "numeric",
-    hour12: true,
   });
   let StatusColorEnum = Object.keys(Statuses).find(
     (key) => Statuses[key] === complaint.status
   );
   const [CommentFValue, setCommentFValue] = useState("");
+
   return (
     <div className="">
       <DialogTitle className="flex justify-between">
-        Complaint Details
+        {complaint.reason === "Elogio" ? (
+          `Detalhes do ${complaint.reason}`
+        ) : complaint.reason === "Outros" ? (
+          "Detalhes"
+        ) : (
+          `Detalhes da ${complaint.reason}`
+        )}
         <DialogActions>
           <FontAwesomeIcon
             onClick={() => {
@@ -82,19 +91,28 @@ const ComplaintDetailModal = ({ setDialogOpen, complaint }) => {
           </div>
           <h2 className="text-lg font-bold my-4">{complaint.reason}</h2>
           <p>{complaint.additionalInfo}</p>
+
+          {/* Adicione esta seção para exibir o número de protocolo */}
+          <div className="flex gap-3 items-center">
+            <FontAwesomeIcon icon={faHashtag} />
+            <p>Número de Protocolo: {complaint.protocolNumber}</p>
+          </div>
+
           {complaint.mediaType === "image" ? (
             <img
               className="max-w-full w-auto h-96 object-scale-down"
               src={complaint.mediaPath}
+              alt="Imagem da reclamação"
             />
-          ) : (
+          ) : complaint.mediaType === "video" ? (
             <video
               controls
               className="max-w-full w-auto h-96 object-scale-down"
               src={complaint.mediaPath}
+              alt="Vídeo da reclamação"
             />
-          )}
-          <h2 className="text-lg font-bold my-4">Comments</h2>
+          ) : null}
+          <h2 className="text-lg font-bold my-4">Comentários</h2>
           <div>
             {complaint.comments && complaint.comments.length === 0 ? (
               <p className="text-center">Sem comentários</p>
@@ -114,7 +132,7 @@ const ComplaintDetailModal = ({ setDialogOpen, complaint }) => {
               value={CommentFValue}
               onChange={(e) => {
                 setCommentFValue(e.target.value);
-                if (e.target.value == "") {
+                if (e.target.value === "") {
                   setCommentBoxDisabled(true);
                 } else {
                   setCommentBoxDisabled(false);
@@ -141,7 +159,9 @@ const ComplaintDetailModal = ({ setDialogOpen, complaint }) => {
       <DialogActions>
         {Official && complaint.status === Statuses.inProgress ? (
           <>
-            <Button color="error" variant="outlined"
+            <Button
+              color="error"
+              variant="outlined"
               onClick={async () => {
                 await markAsRejected(complaint.id);
                 setDialogOpen(false);

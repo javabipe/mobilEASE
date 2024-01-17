@@ -1,12 +1,12 @@
+// Navbar.jsx
 import styled from "@emotion/styled";
-import { faBars, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars, faClose } from "@fortawesome/free-solid-svg-icons";
 import MuiButton from "@mui/material/Button";
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { auth } from "../utils/Firebase";
 import { isOfficial } from "../utils/FirebaseFunctions";
-import Logo from "/src/assets/logo.png";
 
 export const Button = styled(MuiButton)((props) => ({
   borderRadius: "25px",
@@ -23,6 +23,8 @@ const Navbar = () => {
   const [User, setUser] = useState(null);
   const [Official, setOfficial] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
   const handleLogout = () => {
     auth.signOut();
     setUser(null);
@@ -43,11 +45,17 @@ const Navbar = () => {
   return (
     <>
       <div className="Navbar w-screen flex justify-between items-center px-4 py-2 lg:py-4 lg:px-8 mt-2">
-        <Link to="/">
-          <Button component={Link} to="/" variant="outlined">
+        {location.pathname !== "/citizen-dashboard" && ( // Adicionada a condição para ocultar em "/citizen-dashboard"
+          <Button
+            component={Link}
+            to="/"
+            variant="outlined"
+            // Adicionei uma condição para verificar se você está na página inicial
+            onClick={() => navigate(location.pathname === "/" ? "/" : "/")}
+          >
             Início
           </Button>
-        </Link>
+        )}
         {User ? (
           <div className="ButtonGroup gap-8 hidden lg:flex">
             <Button
@@ -71,7 +79,6 @@ const Navbar = () => {
             </Button>
           </div>
         )}
-
         <FontAwesomeIcon
           className="lg:hidden"
           icon={Visible ? faClose : faBars}
