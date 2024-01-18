@@ -21,6 +21,7 @@ import {
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Statuses, userTypes } from "./enums";
+import axios from 'axios';
 
 export const handleRegistration = async (formData) => {
   try {
@@ -84,7 +85,7 @@ export const createComplaint = async (formData, media, selectedEmails) => {
       fileLink = await getDownloadURL(fileRef);
     }
 
-    // Gera um protocolo com 7 digiteos
+    // Gera um protocolo com 7 dígitos
     const protocolNumber = Math.floor(1000000 + Math.random() * 9000000);
 
     // Adiciona o protocolo
@@ -93,11 +94,26 @@ export const createComplaint = async (formData, media, selectedEmails) => {
       timestamp,
       mediaPath: fileLink,
       protocolNumber,
-      selectedEmails: selectedEmails || [], 
+      selectedEmails: selectedEmails || [],
     };
 
     // Adiciona os dados ao Firestore
     await addDoc(collection(db, "complaints"), updatedFormData);
+
+    // Envia o corpo do email para o serviço local
+    await axios.post('http://localhost:3000/send', {
+      to: selectedEmails.join(','), // Concatena os emails selecionados em uma string
+      subject: 'Assunto do Email',
+      html: `
+        <h2>Criar um registro</h2>
+        <p><strong>Localização:</strong> ${formData.location.name}</p>
+        <p><strong>Assunto:</strong> ${formData.reason}</p>
+        <p><strong>Mais informação:</strong> ${formData.additionalInfo}</p>
+        <p><strong>Destinatários Selecionados:</strong> ${selectedEmails.join(',')}</p>
+        <p><strong>Termos Aceitos:</strong> ${formData.termsAccepted ? 'Sim' : 'Não'}</p>
+      `,
+    });
+
   } catch (error) {
     throw new Error(error.message);
   }
