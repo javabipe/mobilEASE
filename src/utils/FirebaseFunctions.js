@@ -114,12 +114,59 @@ export const createComplaint = async (formData, media, selectedEmails) => {
       `,
     });
 
+    await axios.post('http://localhost:3000/send', {
+      to: auth.currentUser.email,
+      subject: 'Aqui está seu Protocolo',
+      html: `
+      <!DOCTYPE html>
+      <html lang="pt-BR">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+      
+        <style>
+          
+          div{
+            border: 1px solid rgba(0, 0, 0, 0.527);
+            border-radius: 25px;
+            box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.418);
+      
+            height: 250px;
+            width: 50%;
+            margin: auto;
+            background-image: linear-gradient(to bottom, #b8d3e2 0%, #87c2e5 53% 10%)
+          }
+      
+          h1 {
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+          }
+      
+          p {
+            text-align: center;
+            font-size: 2.5em;
+            font-family: Arial, Helvetica, sans-serif;
+            margin-top: 10px;
+            color: white;
+          }
+        </style>
+      </head>
+      <body>
+        <div>
+          <h1>Aqui está seu número de protocolo</h1>
+          <p>${protocolNumber}</p>
+        </div>
+        
+      </body>
+      </html>
+      `,
+    });
+
   } catch (error) {
     throw new Error(error.message);
   }
 };
-
-
 
 export const fetchComplaintsByUser = (uid, handleComplaintsUpdate) => {
   const complaintsRef = collection(db, "complaints");
