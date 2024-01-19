@@ -234,7 +234,7 @@ const ReportComplaint = () => {
               setFormData({ ...FormData, selectedEmails: emails });
             }}
             options={[
-              { value: 'gustavoglennyngg@gmail.com', label: 'Prefeitura' }
+              { value: 'gustavolennyng@outlook.com', label: 'Prefeitura' }
             ]}
             styles={{
               container: (provided, state) => ({
