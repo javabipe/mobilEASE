@@ -77,7 +77,7 @@ const ComplaintDetailModal = ({ setDialogOpen, complaint }) => {
               <p>{complaint.location.name}</p>
             </div>
             <span
-              className="w-30 text-center rounded-xl font-bold flex items-center text-white h-12 lg:h-6 px-4"
+              className="w-30 text-center rounded-xl font-bold flex items-center text-white h-12 lg:h-12 px-4"
               style={{
                 backgroundColor: statusColors[StatusColorEnum],
               }}

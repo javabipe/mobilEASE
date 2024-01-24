@@ -29,15 +29,15 @@ const HomePage = () => {
   return (
     <div className="HomePage">
       <Navbar />
-      <div className="HomeContainer grid grid-cols-1 lg:grid-cols-5 items-center px-1 lg:px-20 gap-1">
+      <div className="HomeContainer grid grid-cols-1 lg:grid-cols-5 items-center mt-9 px-1 lg:px-20 gap-1">
         <div className="flex items-center justify-center lg:col-span-1">
-          <img className="logo max-w-[230px] max-h-[180px] h-50 lg:h-63 w-72 mx-auto" src={Logo} alt="Logo" />
+          <img className="logo max-w-[260px] max-h-[240px] h-50 lg:h-53 w-72 mx-auto" src={Logo} alt="Logo" />
         </div>
 
         {/* Imagem TrafficArt */}
         <div className="lg:col-span-1">
           <img
-            className="TrafficArt w-full lg:w-auto mx-auto max-w-[250px] max-h-[150px] mt-90" // Removi a margem superior
+            className="TrafficArt w-full lg:w-auto mx-auto max-w-[420px] max-h-[380px] mt-90" // Removi a margem superior
             src={TrafficArt}
             alt="Traffic Art"
           />

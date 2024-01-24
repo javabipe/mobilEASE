@@ -21,6 +21,7 @@
     "@mui/x-data-grid": "^6.5.0",
     "axios": "^1.6.5",
     "clsx": "^1.2.1",
+    "dotenv": "^16.4.1",
     "firebase": "^9.21.0",
     "geojson-places": "^1.0.8",
     "localforage": "^1.10.0",

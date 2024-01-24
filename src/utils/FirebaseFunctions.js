@@ -103,14 +103,13 @@ export const createComplaint = async (formData, media, selectedEmails) => {
     // Envia o corpo do email para o serviço local
     await axios.post('http://localhost:3000/send', {
       to: selectedEmails.join(','), // Concatena os emails selecionados em uma string
-      subject: 'Assunto do Email',
+      subject: 'Novo registro no FalaGov',
       html: `
-        <h2>Criar um registro</h2>
+        <h2>Informações do registro</h2>
         <p><strong>Localização:</strong> ${formData.location.name}</p>
         <p><strong>Assunto:</strong> ${formData.reason}</p>
-        <p><strong>Mais informação:</strong> ${formData.additionalInfo}</p>
-        <p><strong>Destinatários Selecionados:</strong> ${selectedEmails.join(',')}</p>
-        <p><strong>Termos Aceitos:</strong> ${formData.termsAccepted ? 'Sim' : 'Não'}</p>
+        <p><strong>Detalhes:</strong> ${formData.additionalInfo}</p>
+        ${fileLink ? `<img src="${fileLink}" alt="Anexo de mídia" style="max-width: 100%;" />` : ''}
       `,
     });
 
