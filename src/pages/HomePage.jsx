@@ -14,22 +14,26 @@ const HomePage = () => {
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
-      if (user && !isOfficial(user.uid)) {
-        navigate("/citizen-dashboard");
-      } else if (user && isOfficial(user.uid)) {
-        navigate("/official-dashboard");
-      }
       setUser(user);
-      isOfficial(user?.uid).then((res) => {
-        setOfficial(res);
-      });
+  
+      if (user && user.uid) {
+        // Verificar apenas quando user e user.uid são definidos
+        isOfficial(user.uid).then((res) => {
+          setOfficial(res);
+          if (user && !res) {
+            navigate("/citizen-dashboard");
+          } else if (user && res) {
+            navigate("/official-dashboard");
+          }
+        });
+      }
     });
   }, [navigate]);
 
   return (
     <div className="HomePage">
       <Navbar />
-      <div className="HomeContainer grid grid-cols-1 lg:grid-cols-5 items-center mt-9 px-1 lg:px-20 gap-1">
+      <div className="HomeContainer grid grid-cols-1 lg:grid-cols-5 items-center mt-9  px-1 lg:px-20 gap-1">
         <div className="flex items-center justify-center lg:col-span-1">
           <img className="logo max-w-[260px] max-h-[240px] h-50 lg:h-53 w-72 mx-auto" src={Logo} alt="Logo" />
         </div>
@@ -44,7 +48,7 @@ const HomePage = () => {
         </div>
 
         {/* Register Account */}
-        <div className="lg:col-span-3 mt-8"> {/* Ajuste o número conforme necessário */}
+        <div className="lg:col-span-3 mt-8 ml-20"> {/* Ajuste o número conforme necessário */}
           <h3 className="slogan lg:mt-2 leading-normal font-bold text-center text-base lg:text-[2rem]">
             ESTAMOS AQUI PARA TE OUVIR
           </h3>

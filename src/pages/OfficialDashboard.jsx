@@ -27,6 +27,8 @@ const OfficialDashboard = () => {
             navigate("/citizen-dashboard");
           } else {
             setSpinnerVisible(false);
+            // Chame a função fetchComplaints aqui, após a autenticação estar completa
+            fetchComplaints(handleComplaintsUpdate, user.email);
           }
         });
       }

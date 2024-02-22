@@ -45,12 +45,11 @@ const Navbar = () => {
   return (
     <>
       <div className="Navbar w-screen flex justify-between items-center px-4 py-2 lg:py-4 lg:px-8 mt-2">
-        {location.pathname !== "/citizen-dashboard" && ( // Adicionada a condição para ocultar em "/citizen-dashboard"
+        {location.pathname !== "/citizen-dashboard" && location.pathname !== "/report" && (
           <Button
             component={Link}
             to="/"
             variant="outlined"
-            // Adicionei uma condição para verificar se você está na página inicial
             onClick={() => navigate(location.pathname === "/" ? "/" : "/")}
           >
             Início
@@ -58,16 +57,24 @@ const Navbar = () => {
         )}
         {User ? (
           <div className="ButtonGroup gap-8 hidden lg:flex">
-            <Button
-              component={Link}
-              to={Official ? "/official-dashboard" : "/citizen-dashboard"}
-              variant="outlined"
-            >
-              Painel
-            </Button>
-            <Button onClick={handleLogout} variant="outlined">
-              Sair
-            </Button>
+            {location.pathname === "/citizen-dashboard" || location.pathname === "/official-dashboard" ? (
+              <Button onClick={handleLogout} variant="outlined">
+                Sair
+              </Button>
+            ) : (
+              <>
+                <Button
+                  component={Link}
+                  to={Official ? "/official-dashboard" : "/citizen-dashboard"}
+                  variant="outlined"
+                >
+                  Painel
+                </Button>
+                <Button onClick={handleLogout} variant="outlined">
+                  Sair
+                </Button>
+              </>
+            )}
           </div>
         ) : (
           <div className="ButtonGroup gap-8 hidden lg:flex">

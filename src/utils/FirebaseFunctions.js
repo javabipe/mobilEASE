@@ -47,13 +47,18 @@ export const handleRegistration = async (formData) => {
 export const isOfficial = async (userId) => {
   const userDocRef = doc(db, "users", userId);
   const userDocSnapshot = await getDoc(userDocRef);
-  const userData =  userDocSnapshot.data();
-  const userType = userData.type;
-  if (userType === userTypes.official) {
-    return true;
-  } else {
-    return false;
+
+  if (userDocSnapshot.exists()) { // Verifique se o documento existe
+    const userData = userDocSnapshot.data();
+
+    console.log("Email do oficial:", userData.email); // Adicionei esta linha
+
+    if (userData && userData.type === userTypes.official) {
+      return true;
+    }
   }
+
+  return false;
 };
 
 export const handleLogin = async (formData) => {
@@ -117,48 +122,10 @@ export const createComplaint = async (formData, media, selectedEmails) => {
       to: auth.currentUser.email,
       subject: 'Aqui está seu Protocolo',
       html: `
-      <!DOCTYPE html>
-      <html lang="pt-BR">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-      
-        <style>
-          
-          div{
-            border: 1px solid rgba(0, 0, 0, 0.527);
-            border-radius: 25px;
-            box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.418);
-      
-            height: 250px;
-            width: 50%;
-            margin: auto;
-            background-image: linear-gradient(to bottom, #b8d3e2 0%, #87c2e5 53% 10%)
-          }
-      
-          h1 {
-            text-align: center;
-            font-family: Arial, Helvetica, sans-serif;
-          }
-      
-          p {
-            text-align: center;
-            font-size: 2.5em;
-            font-family: Arial, Helvetica, sans-serif;
-            margin-top: 10px;
-            color: white;
-          }
-        </style>
-      </head>
-      <body>
-        <div>
-          <h1>Aqui está seu número de protocolo</h1>
-          <p>${protocolNumber}</p>
-        </div>
-        
-      </body>
-      </html>
+        <h2>Seu registro foi criado com sucesso!</h2>
+        <h2>Em breve, um de nossos responsáveis irá analisar sua situação.</h2>
+        <h2>Aqui está seu número de protocolo: ${protocolNumber}</h2>
+        <h2>Estamos ansiosos para fornecer o melhor atendimento possível.</h2>
       `,
     });
 
@@ -210,7 +177,9 @@ export const findComplaintAuthor = async (uid) => {
   }
 };
 
-export const fetchComplaints = (handleComplaintsUpdate) => {
+export const fetchComplaints = (handleComplaintsUpdate, officialEmail) => {
+  console.log("Email do oficial logado:", officialEmail); // Adicione esta linha
+
   const complaintsCollection = collection(db, "complaints");
 
   return onSnapshot(complaintsCollection, async (complaintsSnapshot) => {
@@ -224,46 +193,50 @@ export const fetchComplaints = (handleComplaintsUpdate) => {
       const userDoc = await getDoc(doc(db, "users", reportedByUserId));
       const userData = userDoc.data();
 
-      const complaintWithAuthor = {
-        id: complaintId,
-        author: userData.name,
-        ...complaintData,
-        comments: [],
-      };
+      // Verifique se o email do oficial está presente na lista selectedEmails
+      if (complaintData.selectedEmails && officialEmail && complaintData.selectedEmails.includes(officialEmail)) {
+        const complaintWithAuthor = {
+          id: complaintId,
+          author: userData.name,
+          ...complaintData,
+          comments: [],
+        };
 
-      const commentsCollection = collection(
-        db,
-        "complaints",
-        complaintId,
-        "comments"
-      );
-      const commentsUnsubscribe = onSnapshot(
-        commentsCollection,
-        (commentsSnapshot) => {
-          const comments = commentsSnapshot.docs.map((commentDoc) => {
-            const commentData = commentDoc.data();
-            const commentId = commentDoc.id;
+        const commentsCollection = collection(
+          db,
+          "complaints",
+          complaintId,
+          "comments"
+        );
+        const commentsUnsubscribe = onSnapshot(
+          commentsCollection,
+          (commentsSnapshot) => {
+            const comments = commentsSnapshot.docs.map((commentDoc) => {
+              const commentData = commentDoc.data();
+              const commentId = commentDoc.id;
 
-            return {
-              id: commentId,
-              author: commentData.author,
-              comment: commentData.comment,
-              timestamp: commentData.timestamp,
-            };
-          });
+              return {
+                id: commentId,
+                author: commentData.author,
+                comment: commentData.comment,
+                timestamp: commentData.timestamp,
+              };
+            });
 
-          complaintWithAuthor.comments = comments;
-          handleComplaintsUpdate([...updatedComplaints]);
-        }
-      );
+            complaintWithAuthor.comments = comments;
+            handleComplaintsUpdate([...updatedComplaints]);
+          }
+        );
 
-      updatedComplaints.push(complaintWithAuthor);
-      complaintWithAuthor.commentsUnsubscribe = commentsUnsubscribe;
+        updatedComplaints.push(complaintWithAuthor);
+        complaintWithAuthor.commentsUnsubscribe = commentsUnsubscribe;
+      }
     }
 
     handleComplaintsUpdate([...updatedComplaints]);
   });
 };
+
 
 export const addComment = async (complaintID, comment) => {
   try {

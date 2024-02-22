@@ -155,7 +155,6 @@ const ReportComplaint = () => {
             variant="outlined"
             label="Localização"
             value={FormData.location.name}
-            required
             contentEditable={false}
             InputProps={{
               endAdornment: (
