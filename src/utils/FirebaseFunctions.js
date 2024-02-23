@@ -259,6 +259,31 @@ export const addComment = async (complaintID, comment) => {
   }
 };
 
+export const addSelectedEmail = async (complaintID, newEmail) => {
+  try {
+    const complaintDocRef = doc(db, "complaints", complaintID);
+    const complaintDocSnapshot = await getDoc(complaintDocRef);
+
+    if (complaintDocSnapshot.exists()) {
+      const complaintData = complaintDocSnapshot.data();
+      
+      // Verifica se o campo selectedEmails já existe
+      const selectedEmails = complaintData.selectedEmails || [];
+
+      // Adiciona o novo email ao array
+      selectedEmails.push(newEmail);
+
+      // Atualiza o documento no Firestore
+      await updateDoc(complaintDocRef, { selectedEmails });
+    } else {
+      throw new Error("Complaint document does not exist");
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+
 export const fetchUserById = async (uid) => {
   try {
     const userDocRef = doc(db, "users", uid);
