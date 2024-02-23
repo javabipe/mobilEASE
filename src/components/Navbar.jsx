@@ -25,27 +25,37 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+
+        // Chama isOfficial apenas quando o usuário faz login
+        isOfficial(user.uid).then((res) => {
+          setOfficial(res);
+        });
+      }
+    });
+
+    return () => {
+      // Cancela a inscrição quando o componente é desmontado
+      unsubscribe();
+    };
+  }, []);
+
   const handleLogout = () => {
     auth.signOut();
     setUser(null);
     navigate("/");
   };
 
-  useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUser(user);
-        isOfficial(user.uid).then((res) => {
-          setOfficial(res);
-        });
-      }
-    });
-  }, []);
+  // Verifica se está na página /official-dashboard
+  const isOfficialDashboardPage = location.pathname === "/official-dashboard";
 
   return (
     <>
       <div className="Navbar w-screen flex justify-between items-center px-4 py-2 lg:py-4 lg:px-8 mt-2">
-        {location.pathname !== "/citizen-dashboard" && location.pathname !== "/report" && (
+        {!isOfficialDashboardPage && location.pathname !== "/citizen-dashboard" && location.pathname !== "/report" && (
           <Button
             component={Link}
             to="/"

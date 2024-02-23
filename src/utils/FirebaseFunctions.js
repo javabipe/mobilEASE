@@ -51,8 +51,6 @@ export const isOfficial = async (userId) => {
   if (userDocSnapshot.exists()) { // Verifique se o documento existe
     const userData = userDocSnapshot.data();
 
-    console.log("Email do oficial:", userData.email); // Adicionei esta linha
-
     if (userData && userData.type === userTypes.official) {
       return true;
     }
@@ -178,7 +176,6 @@ export const findComplaintAuthor = async (uid) => {
 };
 
 export const fetchComplaints = (handleComplaintsUpdate, officialEmail) => {
-  console.log("Email do oficial logado:", officialEmail); // Adicione esta linha
 
   const complaintsCollection = collection(db, "complaints");
 
