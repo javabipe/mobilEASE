@@ -104,7 +104,7 @@ export const createComplaint = async (formData, media, selectedEmails) => {
     await addDoc(collection(db, "complaints"), updatedFormData);
 
     // Envia o corpo do email para o serviço local
-    await axios.post('https://faec.falagov.com.br/:3000/send', {
+    await axios.post('http://localhost:3000/send', {
       to: selectedEmails.join(','), // Concatena os emails selecionados em uma string
       subject: 'Novo registro no FalaGov',
       html: `
@@ -116,7 +116,7 @@ export const createComplaint = async (formData, media, selectedEmails) => {
       `,
     });
 
-    await axios.post('https://faec.falagov.com.br/:3000/send', {
+    await axios.post('http://localhost:3000/send', {
       to: auth.currentUser.email,
       subject: 'Aqui está seu Protocolo',
       html: `
