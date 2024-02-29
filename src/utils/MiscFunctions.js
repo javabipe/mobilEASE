@@ -6,7 +6,7 @@ export const identifyLocation = async () => {
       navigator.geolocation.getCurrentPosition(resolve, reject);
     });
 
-    const apiKey = "AIzaSyCrFDczBiXvDRY5pOTNYHl_6gDN83SOUcE";
+    const apiKey = "AIzaSyCrFDczBiXvDRY5pOTNYHl_6gDN83SOUcE"; //
 
     const response = await axios.get(
       `https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&key=${apiKey}`
