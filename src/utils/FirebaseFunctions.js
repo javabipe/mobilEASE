@@ -103,29 +103,6 @@ export const createComplaint = async (formData, media, selectedEmails) => {
     // Adiciona os dados ao Firestore
     await addDoc(collection(db, "complaints"), updatedFormData);
 
-    // Envia o corpo do email para o serviço local
-    await axios.post('http://localhost:3000/send', {
-      to: selectedEmails.join(','), // Concatena os emails selecionados em uma string
-      subject: 'Novo registro no FalaGov',
-      html: `
-        <h2>Informações do registro</h2>
-        <p><strong>Localização:</strong> ${formData.location.name}</p>
-        <p><strong>Assunto:</strong> ${formData.reason}</p>
-        <p><strong>Detalhes:</strong> ${formData.additionalInfo}</p>
-        ${fileLink ? `<img src="${fileLink}" alt="Anexo de mídia" style="max-width: 100%;" />` : ''}
-      `,
-    });
-
-    await axios.post('http://localhost:3000/send', {
-      to: auth.currentUser.email,
-      subject: 'Aqui está seu Protocolo',
-      html: `
-        <h2>Seu registro foi criado com sucesso!</h2>
-        <h2>Em breve, um de nossos responsáveis irá analisar sua situação.</h2>
-        <h2>Aqui está seu número de protocolo: ${protocolNumber}</h2>
-        <h2>Estamos ansiosos para fornecer o melhor atendimento possível.</h2>
-      `,
-    });
 
   } catch (error) {
     throw new Error(error.message);
