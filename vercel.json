@@ -1,7 +1,7 @@
 {
   "headers": [
     {
-      "source": "/src/utils/FirebaseFunctions.js",
+      "source": "/*",
       "headers": [
         { "key": "Access-Control-Allow-Credentials", "value": "true" },
         { "key": "Access-Control-Allow-Origin", "value": "https://faec.falagov.com.br" },
