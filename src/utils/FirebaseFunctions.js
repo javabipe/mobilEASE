@@ -101,10 +101,8 @@ export const createComplaint = async (formData, media, selectedEmails) => {
       selectedEmails: selectedEmails || [],
     };
 
-    // Adiciona os dados ao Firestore
     const docRef = await addDoc(collection(db, "complaints"), updatedFormData);
 
-    // Envie e-mails usando o SendGrid 
     const sendGridApiKey = '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';
     const apiUrl = 'https://api.sendgrid.com/v3/mail/send';
 
@@ -139,7 +137,6 @@ export const createComplaint = async (formData, media, selectedEmails) => {
       },
     });
 
-    // Envie o segundo e-mail para o usuário que criou a reclamação
     const userEmailAddress = auth.currentUser.email;
 
     const segundoEmailPayload = {
