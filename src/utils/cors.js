@@ -1,4 +1,4 @@
-const allowCors = fn => async (req, res) => {
+export const allowCors = fn => async (req, res) => {
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', 'https://faec.falagov.com.br'); // Substitua com o domínio correto da sua aplicação
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -14,6 +14,4 @@ const allowCors = fn => async (req, res) => {
   
     return await fn(req, res);
   };
-  
-  module.exports = allowCors;
   

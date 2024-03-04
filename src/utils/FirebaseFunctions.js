@@ -22,7 +22,7 @@ import {
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Statuses, userTypes } from "./enums";
 import axios from 'axios';
-import allowCors from "./cors";
+import { allowCors } from './cors.js';
 
 
 export const handleRegistration = async (formData) => {
