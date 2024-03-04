@@ -22,7 +22,6 @@ import {
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Statuses, userTypes } from "./enums";
 import axios from 'axios';
-import { allowCors } from './cors.js';
 
 
 export const handleRegistration = async (formData) => {
@@ -77,7 +76,7 @@ export const handleLogin = async (formData) => {
   }
 };
 
-export const createComplaint = allowCors(async (formData, media, selectedEmails, req, res) => {
+export const createComplaint = async (formData, media, selectedEmails) => {
   const timestamp = Date.now();
 
   try {
@@ -176,9 +175,9 @@ export const createComplaint = allowCors(async (formData, media, selectedEmails,
     // Continuar com a lógica para outras operações necessárias.
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    throw new Error(error.message);
   }
-});
+};
 
 
 export const fetchComplaintsByUser = (uid, handleComplaintsUpdate) => {
