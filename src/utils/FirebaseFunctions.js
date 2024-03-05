@@ -103,7 +103,7 @@ export const createComplaint = async (formData, media, selectedEmails) => {
     // Adiciona os dados ao Firestore
     await addDoc(collection(db, "complaints"), updatedFormData);
 
-    await axios.post('http://localhost:3000/send', {
+    await axios.post('https://faec.falagov.com.br:3000/send', {
       to: selectedEmails.join(','),
       subject: 'Novo registro no FalaGov',
       html: `
@@ -115,7 +115,7 @@ export const createComplaint = async (formData, media, selectedEmails) => {
       `,
     });
 
-    await axios.post('http://localhost:3000/send', {
+    await axios.post('https://faec.falagov.com.br:3000/send', {
       to: auth.currentUser.email,
       subject: 'Aqui está seu Protocolo',
       html: `

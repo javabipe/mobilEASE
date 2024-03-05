@@ -47,7 +47,7 @@ const HomePage = () => {
         </div>
 
         {/* Register Account */}
-        <div className="lg:col-span-3 mt-8 ml-5 mr-5"> {/* Ajuste o número conforme necessário */}
+        <div className="lg:col-span-3 mt-8 ml-14 mr-14"> {/* Ajuste o número conforme necessário */}
           <h3 className="slogan lg:mt-2 leading-normal font-bold text-center text-base lg:text-[2rem]">
             ESTAMOS AQUI PARA TE OUVIR
           </h3>
