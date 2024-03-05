@@ -38,7 +38,6 @@ const HomePage = () => {
           <img className="logo max-w-[260px] max-h-[240px] h-50 lg:h-53 w-72 mx-auto" src={Logo} alt="Logo" />
         </div>
 
-        {/* Imagem TrafficArt */}
         <div className="lg:col-span-1">
           <img
             className="TrafficArt w-full lg:w-auto mx-auto max-w-[420px] max-h-[380px] mt-90" // Removi a margem superior
@@ -48,14 +47,12 @@ const HomePage = () => {
         </div>
 
         {/* Register Account */}
-        <div className="lg:col-span-3 mt-8 ml-20"> {/* Ajuste o número conforme necessário */}
+        <div className="lg:col-span-3 mt-8 ml-5 mr-5"> {/* Ajuste o número conforme necessário */}
           <h3 className="slogan lg:mt-2 leading-normal font-bold text-center text-base lg:text-[2rem]">
             ESTAMOS AQUI PARA TE OUVIR
           </h3>
           <RegisterAccount className="lg:w-full mx-auto" /> {/* Adicione a classe lg:w-full e mx-auto para ocupar toda a largura e centralizar em telas grandes */}
         </div>
-
-        {/* Adicione outros elementos aqui, se necessário */}
       </div>
     </div>
   );

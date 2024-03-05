@@ -23,7 +23,6 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Statuses, userTypes } from "./enums";
 import axios from 'axios';
 
-
 export const handleRegistration = async (formData) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(
@@ -101,81 +100,36 @@ export const createComplaint = async (formData, media, selectedEmails) => {
       selectedEmails: selectedEmails || [],
     };
 
-    const docRef = await addDoc(collection(db, "complaints"), updatedFormData);
+    // Adiciona os dados ao Firestore
+    await addDoc(collection(db, "complaints"), updatedFormData);
 
-    const sendGridApiKey = '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';
-    const apiUrl = 'https://api.sendgrid.com/v3/mail/send';
-
-    const emailPayload = {
-      personalizations: [
-        {
-          to: selectedEmails.map(email => ({ email })),
-          subject: 'Novo registro no FalaGov',
-        },
-      ],
-      from: {
-        email: 'falecomogoverno@gmail.com',
-      },
-      content: [
-        {
-          type: 'text/html',
-          value: `
-            <h2>Informações do registro</h2>
-            <p><strong>Localização:</strong> ${formData.location.name}</p>
-            <p><strong>Assunto:</strong> ${formData.reason}</p>
-            <p><strong>Detalhes:</strong> ${formData.additionalInfo}</p>
-            ${fileLink ? `<img src="${fileLink}" alt="Anexo de mídia" style="max-width: 100%;" />` : ''}
-          `,
-        },
-      ],
-    };
-
-    await axios.post(apiUrl, emailPayload, {
-      headers: {
-        Authorization: `Bearer ${sendGridApiKey}`,
-        'Content-Type': 'application/json',
-      },
+    await axios.post('http://localhost:3000/send', {
+      to: selectedEmails.join(','),
+      subject: 'Novo registro no FalaGov',
+      html: `
+        <h2>Informações do registro</h2>
+        <p><strong>Localização:</strong> ${formData.location.name}</p>
+        <p><strong>Assunto:</strong> ${formData.reason}</p>
+        <p><strong>Detalhes:</strong> ${formData.additionalInfo}</p>
+        ${fileLink ? `<img src="${fileLink}" alt="Anexo de mídia" style="max-width: 100%;" />` : ''}
+      `,
     });
 
-    const userEmailAddress = auth.currentUser.email;
-
-    const segundoEmailPayload = {
-      personalizations: [
-        {
-          to: [{ email: userEmailAddress }],
-          subject: 'Aqui está seu Protocolo',
-        },
-      ],
-      from: {
-        email: 'falecomogoverno@gmail.com',
-      },
-      content: [
-        {
-          type: 'text/html',
-          value: `
-            <h2>Seu registro foi criado com sucesso!</h2>
-            <h2>Em breve, um de nossos responsáveis irá analisar sua situação.</h2>
-            <h2>Aqui está seu número de protocolo: ${protocolNumber}</h2>
-            <h2>Estamos ansiosos para fornecer o melhor atendimento possível.</h2>
-          `,
-        },
-      ],
-    };
-
-    await axios.post(apiUrl, segundoEmailPayload, {
-      headers: {
-        Authorization: `Bearer ${sendGridApiKey}`,
-        'Content-Type': 'application/json',
-      },
+    await axios.post('http://localhost:3000/send', {
+      to: auth.currentUser.email,
+      subject: 'Aqui está seu Protocolo',
+      html: `
+        <h2>Seu registro foi criado com sucesso!</h2>
+        <h2>Em breve, um de nossos responsáveis irá analisar sua situação.</h2>
+        <h2>Aqui está seu número de protocolo: ${protocolNumber}</h2>
+        <h2>Estamos ansiosos para fornecer o melhor atendimento possível.</h2>
+      `,
     });
-
-    // Continuar com a lógica para outras operações necessárias.
 
   } catch (error) {
     throw new Error(error.message);
   }
 };
-
 
 export const fetchComplaintsByUser = (uid, handleComplaintsUpdate) => {
   const complaintsRef = collection(db, "complaints");

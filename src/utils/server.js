@@ -2,7 +2,7 @@ import express from "express";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
-import cors from "cors"; // Adicione esta linha
+import cors from "cors";
 
 dotenv.config();
 const app = express();

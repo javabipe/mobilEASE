@@ -238,7 +238,8 @@ const ReportComplaint = () => {
             styles={{
               container: (provided, state) => ({
                 ...provided,
-                width: '1610px', // Ajuste a largura conforme necessário
+                marginBottom: '16px',
+                maxWidth: '91%'
               }),
               control: (provided, state) => ({
                 ...provided,
